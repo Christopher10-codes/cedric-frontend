@@ -1,5 +1,5 @@
 // API Base URL - Change this to your server URL
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = 'https://cedric-backend.onrender.com/api';
 
 // DOM Elements
 const mobileMenuBtn = document.querySelector('.mobile-menu');
@@ -539,4 +539,5 @@ function setupAdminFunctionality() {
 // Setup plans filtering
 function setupPlansFiltering() {
     // Add filtering functionality if needed
+
 }
