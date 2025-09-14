@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Plan Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --success-color: #27ae60;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .sidebar {
+            min-height: 100vh;
+            background-color: var(--secondary-color);
+            border-right: 1px solid #dee2e6;
+            padding: 0;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        
+        .sidebar-header h4 {
+            color: white;
+            margin: 0;
+        }
+        
+        .nav-link {
+            color: #b8c7ce;
+            padding: 15px 20px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: none;
+            border-radius: 8px;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #e3e6f0;
+            font-weight: 600;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0 !important;
+        }
+        
+        .floor-plan {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e3e6f0;
+        }
+        
+        .room-tag {
+            display: inline-block;
+            background-color: #e9ecef;
+            padding: 6px 12px;
+            margin: 5px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .room-tag .btn-close {
+            font-size: 0.7rem;
+            margin-left: 8px;
+        }
+        
+        .preview-image {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        .sticky-top {
+            top: 20px;
+        }
+        
+        .house-card {
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        
+        .house-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        
+        .house-card img {
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        
+        .featured-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+        
+        .stats-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stats-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .action-buttons .btn {
+            margin-left: 5px;
+        }
+        
+        .alert-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            min-width: 300px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Image carousel styles */
+        .carousel {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        
+        .carousel-images {
+            position: relative;
+            height: 100%;
+        }
+        
+        .carousel-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .carousel-item.active {
+            opacity: 1;
+        }
+        
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-prev,
+        .carousel-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 100;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .carousel-prev {
+            left: 10px;
+        }
+        
+        .carousel-next {
+            right: 10px;
+        }
+        
+        .carousel-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+        
+        .dot.active {
+            background-color: white;
+        }
+        
+        /* Image upload styles */
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .image-preview-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .image-preview-item .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar px-0">
+                <div class="sidebar-header">
+                    <h4><i class="bi bi-house-heart"></i> Plan Admin</h4>
+                </div>
+                <ul class="nav flex-column mt-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#listings" data-bs-toggle="tab">
+                            <i class="bi bi-house-door"></i> All Listings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#add-new" data-bs-toggle="tab">
+                            <i class="bi bi-plus-circle"></i> Add New Plan
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#stats" data-bs-toggle="tab">
+                            <i class="bi bi-bar-chart"></i> Statistics
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 py-4">
+                <div class="tab-content">
+                    <!-- Listings Tab -->
+                    <div class="tab-pane fade show active" id="listings">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2>House Plan Listings</h2>
+                            <a href="index.html" class="btn btn-primary" id="refresh-list"> <i class="bi bi-arrow-clockwise"></i> View Website </a>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card stats-card">
+                                    <div class="stats-number" id="total-plans">0</div>
+                                    <div class="stats-label">Total Plans</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card stats-card">
+                                    <div class="stats-number" id="featured-plans">0</div>
+                                    <div class="stats-label">Featured Plans</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card stats-card">
+                                    <div class="stats-number" id="total-bedrooms">0</div>
+                                    <div class="stats-label">Total Bedrooms</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card stats-card">
+                                    <div class="stats-number" id="total-bathrooms">0</div>
+                                    <div class="stats-label">Total Bathrooms</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row" id="house-listings">
+                            <!-- House listings will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Add/Edit Form Tab -->
+                    <div class="tab-pane fade" id="add-new">
+                        <h2 class="mb-4" id="form-title">Add New House Plan</h2>
+                        <form id="house-form">
+                            <input type="hidden" id="house-id" value="">
+                            
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Basic Information</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="title" class="form-label">Title</label>
+                                                <input type="text" class="form-control" id="title" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="description" class="form-label">Description</label>
+                                                <textarea class="form-control" id="description" rows="3" required></textarea>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="stories" class="form-label">Number of Stories</label>
+                                                        <select class="form-select" id="stories" required>
+                                                            <option value="1">Single Story</option>
+                                                            <option value="2">Double Story</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="dimensions" class="form-label">Dimensions</label>
+                                                        <input type="text" class="form-control" id="dimensions" placeholder="e.g., 15m x 20m" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="price" class="form-label">Price (R)</label>
+                                                        <input type="number" class="form-control" id="price" min="0" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="totalArea" class="form-label">Total Area (m²)</label>
+                                                        <input type="number" class="form-control" id="totalArea" min="0" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="bedrooms" class="form-label">Total Bedrooms</label>
+                                                        <input type="number" class="form-control" id="bedrooms" min="0" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="bathrooms" class="form-label">Total Bathrooms</label>
+                                                        <input type="number" class="form-control" id="bathrooms" min="0" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 form-check form-switch">
+                                                <input type="checkbox" class="form-check-input" id="featured">
+                                                <label class="form-check-label" for="featured">Featured Listing</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card mt-4">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Floor Plans</h5>
+                                        </div>
+                                        <div class="card-body" id="floor-plans-container">
+                                            <!-- Ground floor plan -->
+                                            <div class="floor-plan" data-floor="ground">
+                                                <h6>Ground Floor</h6>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Area (m²)</label>
+                                                    <input type="number" class="form-control floor-area" min="0" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Rooms</label>
+                                                    <div class="input-group mb-2">
+                                                        <input type="text" class="form-control room-input" placeholder="Add room (e.g., Kitchen)">
+                                                        <button class="btn btn-outline-secondary add-room" type="button">Add</button>
+                                                    </div>
+                                                    <div class="rooms-container">
+                                                        <!-- Room tags will be added here -->
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- First floor plan (initially hidden for single story) -->
+                                            <div class="floor-plan d-none" data-floor="first">
+                                                <h6>First Floor</h6>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Area (m²)</label>
+                                                    <input type="number" class="form-control floor-area" min="0">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Rooms</label>
+                                                    <div class="input-group mb-2">
+                                                        <input type="text" class="form-control room-input" placeholder="Add room (e.g., Bedroom)">
+                                                        <button class="btn btn-outline-secondary add-room" type="button">Add</button>
+                                                    </div>
+                                                    <div class="rooms-container">
+                                                        <!-- Room tags will be added here -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="card sticky-top">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Images</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="image-upload" class="form-label">Upload Images (Up to 10)</label>
+                                                <input class="form-control" type="file" id="image-upload" accept="image/*" multiple>
+                                            </div>
+                                            <div class="image-preview-container" id="image-preview-container">
+                                                <!-- Image previews will be added here -->
+                                            </div>
+                                            <input type="hidden" id="imageUrls" name="imageUrls">
+                                            <div class="d-grid gap-2 mt-3">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="bi bi-check-circle"></i> Save House Plan
+                                                </button>
+                                                <button type="button" class="btn btn-outline-secondary" id="cancel-edit">
+                                                    <i class="bi bi-x-circle"></i> Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Statistics Tab -->
+                    <div class="tab-pane fade" id="stats">
+                        <h2 class="mb-4">Statistics</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Plan Distribution</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="storiesChart" height="250"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Price Distribution</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="priceChart" height="250"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">All House Plans</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Title</th>
+                                                        <th>Stories</th>
+                                                        <th>Bedrooms</th>
+                                                        <th>Bathrooms</th>
+                                                        <th>Area (m²)</th>
+                                                        <th>Price</th>
+                                                        <th>Featured</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="stats-table-body">
+                                                    <!-- Will be populated by JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Alert -->
+    <div class="alert alert-success alert-dismissible fade alert-notification" role="alert" id="notification">
+        <span id="notification-message"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+
+         if (sessionStorage.getItem('adminAuthenticated') !== 'true') {
+        window.location.href = '/admin';
+    }
+    
+    // Add logout functionality
+    function logout() {
+        sessionStorage.removeItem('adminAuthenticated');
+        window.location.href = '/admin';
+    }
+    
+    // Add logout button to the admin panel
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create logout button
+        const logoutBtn = document.createElement('button');
+        logoutBtn.className = 'btn btn-outline-danger btn-sm';
+        logoutBtn.innerHTML = '<i class="bi bi-box-arrow-right"></i> Logout';
+        logoutBtn.onclick = logout;
+        
+        // Add it to the header
+        const header = document.querySelector('.d-flex.justify-content-between.align-items-center.mb-4');
+        if (header) {
+            header.appendChild(logoutBtn);
+        }
+        
+        // Add change password functionality to the stats tab
+        const statsTab = document.querySelector('[href="#stats"]');
+        if (statsTab) {
+            statsTab.addEventListener('click', function() {
+                // Add change password section after the table
+                setTimeout(() => {
+                    if (!document.getElementById('changePasswordSection')) {
+                        const changePasswordSection = `
+                            <div class="card mt-4" id="changePasswordSection">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Change Password</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="changePasswordForm">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="currentPassword" class="form-label">Current Password</label>
+                                                    <input type="password" class="form-control" id="currentPassword" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="newPassword" class="form-label">New Password</label>
+                                                    <input type="password" class="form-control" id="newPassword" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Change Password</button>
+                                        <div class="alert alert-success mt-3 d-none" id="passwordChangeSuccess"></div>
+                                        <div class="alert alert-danger mt-3 d-none" id="passwordChangeError"></div>
+                                    </form>
+                                </div>
+                            </div>
+                        `;
+                        
+                        const statsTable = document.querySelector('#stats .card:last-child');
+                        if (statsTable) {
+                            statsTable.insertAdjacentHTML('afterend', changePasswordSection);
+                            
+                            // Add form submission handler
+                            document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+                                e.preventDefault();
+                                
+                                const currentPassword = document.getElementById('currentPassword').value;
+                                const newPassword = document.getElementById('newPassword').value;
+                                const confirmPassword = document.getElementById('confirmPassword').value;
+                                
+                                const successAlert = document.getElementById('passwordChangeSuccess');
+                                const errorAlert = document.getElementById('passwordChangeError');
+                                
+                                // Reset alerts
+                                successAlert.classList.add('d-none');
+                                errorAlert.classList.add('d-none');
+                                
+                                // Validate passwords match
+                                if (newPassword !== confirmPassword) {
+                                    errorAlert.textContent = 'New passwords do not match';
+                                    errorAlert.classList.remove('d-none');
+                                    return;
+                                }
+                                
+                                try {
+                                    const response = await fetch(`${API_BASE}/auth/change-password`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({ currentPassword, newPassword })
+                                    });
+                                    
+                                    const data = await response.json();
+                                    
+                                    if (data.success) {
+                                        successAlert.textContent = data.message;
+                                        successAlert.classList.remove('d-none');
+                                        document.getElementById('changePasswordForm').reset();
+                                    } else {
+                                        errorAlert.textContent = data.message;
+                                        errorAlert.classList.remove('d-none');
+                                    }
+                                } catch (error) {
+                                    console.error('Password change error:', error);
+                                    errorAlert.textContent = 'An error occurred while changing password. Please try again.';
+                                    errorAlert.classList.remove('d-none');
+                                }
+                            });
+                        }
+                    }
+                }, 100);
+            });
+        }
+    });
+        // API base URL
+        const API_BASE = 'http://localhost:3001/api';
+
+        // DOM elements
+        const houseListings = document.getElementById('house-listings');
+        const houseForm = document.getElementById('house-form');
+        const formTitle = document.getElementById('form-title');
+        const houseId = document.getElementById('house-id');
+        const storiesSelect = document.getElementById('stories');
+        const floorPlansContainer = document.getElementById('floor-plans-container');
+        const imageUpload = document.getElementById('image-upload');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const imageUrls = document.getElementById('imageUrls');
+        const cancelEdit = document.getElementById('cancel-edit');
+        const refreshBtn = document.getElementById('refresh-list');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+
+        // Charts
+        let storiesChart = null;
+        let priceChart = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchHousePlans();
+            setupEventListeners();
+        });
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Stories selection change
+            storiesSelect.addEventListener('change', toggleFirstFloor);
+            
+            // Add room buttons
+            document.querySelectorAll('.add-room').forEach(button => {
+                button.addEventListener('click', addRoom);
+            });
+            
+            // Image upload
+            imageUpload.addEventListener('change', handleImageUpload);
+            
+            // Form submission
+            houseForm.addEventListener('submit', saveHousePlan);
+            
+            // Cancel edit
+            cancelEdit.addEventListener('click', resetForm);
+            
+            // Refresh list
+            refreshBtn.addEventListener('click', fetchHousePlans);
+            
+            // Tab change - refresh stats when stats tab is selected
+            document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+                tab.addEventListener('shown.bs.tab', function(e) {
+                    if (e.target.getAttribute('href') === '#stats') {
+                        fetchHousePlans();
+                    }
+                });
+            });
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notificationMessage.textContent = message;
+            notification.className = `alert alert-${type} alert-dismissible fade show alert-notification`;
+            notification.style.display = 'block';
+            
+            // Auto hide after 3 seconds
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(notification);
+                bsAlert.close();
+            }, 3000);
+        }
+
+        let newId = 0;
+
+        // Fetch house plans from server
+        function fetchHousePlans() {
+            fetch(`${API_BASE}/plans`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(plans => {
+                    renderHouseListings(plans);
+                    updateStats(plans);
+                    newId = plans.length + 1;
+                    
+                    // If we're on the stats tab, update charts and table
+                    if (document.querySelector('.nav-link.active').getAttribute('href') === '#stats') {
+                        renderCharts(plans);
+                        renderStatsTable(plans);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching house plans:', error);
+                    showNotification('Error fetching house plans: ' + error.message, 'danger');
+                });
+        }
+
+        // Render house listings
+        function renderHouseListings(plans) {
+            houseListings.innerHTML = '';
+            
+            if (plans.length === 0) {
+                houseListings.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-house-x" style="font-size: 3rem; color: #6c757d;"></i>
+                        <h4 class="mt-3">No house plans found</h4>
+                        <p>Get started by adding your first house plan.</p>
+                        <button class="btn btn-primary" data-bs-target="#add-new" data-bs-toggle="tab">Add New Plan</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            plans.forEach(house => {
+                const card = document.createElement('div');
+                card.className = 'col-md-6 col-lg-4 mb-4';
+                card.innerHTML = `
+                    <div class="card house-card">
+                        ${house.featured ? '<span class="featured-badge badge bg-warning">Featured</span>' : ''}
+                        <div class="carousel">
+                            <div class="carousel-images">
+                                ${house.images && house.images.length > 0 ? 
+                                    house.images.map((image, index) => `
+                                        <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                            <img src="${image}" class="card-img-top" alt="${house.title}" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Not+Found'">
+                                        </div>
+                                    `).join('') : 
+                                    `<div class="carousel-item active">
+                                        <img src="https://via.placeholder.com/400x300?text=No+Image" class="card-img-top" alt="${house.title}">
+                                    </div>`
+                                }
+                            </div>
+                            ${house.images && house.images.length > 1 ? `
+                                <button class="carousel-prev">&#10094;</button>
+                                <button class="carousel-next">&#10095;</button>
+                                <div class="carousel-dots">
+                                    ${house.images.map((_, index) => `
+                                        <span class="dot ${index === 0 ? 'active' : ''}" data-index="${index}"></span>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">${house.title}</h5>
+                            <p class="card-text">${house.description}</p>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-primary">${house.bedrooms} Bed</span>
+                                <span class="badge bg-success">${house.bathrooms} Bath</span>
+                                <span class="badge bg-info">${house.totalArea} m²</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">R${house.price.toLocaleString()}</span>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-outline-primary edit-btn" data-id="${house.id}">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${house.id}">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                houseListings.appendChild(card);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => editHousePlan(e.currentTarget.dataset.id));
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => deleteHousePlan(e.currentTarget.dataset.id));
+            });
+            
+            // Initialize carousels
+            initializeCarousels();
+        }
+
+        // Initialize carousels
+        function initializeCarousels() {
+            document.querySelectorAll('.carousel').forEach(carousel => {
+                const items = carousel.querySelectorAll('.carousel-item');
+                const dots = carousel.querySelectorAll('.dot');
+                const prevBtn = carousel.querySelector('.carousel-prev');
+                const nextBtn = carousel.querySelector('.carousel-next');
+                
+                if (items.length <= 1) {
+                    if (prevBtn) prevBtn.style.display = 'none';
+                    if (nextBtn) nextBtn.style.display = 'none';
+                    if (dots.length > 0) carousel.querySelector('.carousel-dots').style.display = 'none';
+                    return;
+                }
+                
+                let currentIndex = 0;
+                
+                function showSlide(index) {
+                    // Hide all items
+                    items.forEach(item => item.classList.remove('active'));
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    
+                    // Show current item
+                    items[index].classList.add('active');
+                    dots[index].classList.add('active');
+                    
+                    currentIndex = index;
+                }
+                
+                // Next slide
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        let newIndex = currentIndex + 1;
+                        if (newIndex >= items.length) newIndex = 0;
+                        showSlide(newIndex);
+                    });
+                }
+                
+                // Previous slide
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', () => {
+                        let newIndex = currentIndex - 1;
+                        if (newIndex < 0) newIndex = items.length - 1;
+                        showSlide(newIndex);
+                    });
+                }
+                
+                // Dot navigation
+                dots.forEach(dot => {
+                    dot.addEventListener('click', () => {
+                        const index = parseInt(dot.getAttribute('data-index'));
+                        showSlide(index);
+                    });
+                });
+                
+                // Auto slide if more than 1 image
+                if (items.length > 1) {
+                    setInterval(() => {
+                        let newIndex = currentIndex + 1;
+                        if (newIndex >= items.length) newIndex = 0;
+                        showSlide(newIndex);
+                    }, 5000);
+                }
+            });
+        }
+
+        // Update statistics
+        function updateStats(plans) {
+            document.getElementById('total-plans').textContent = plans.length;
+            document.getElementById('featured-plans').textContent = plans.filter(plan => plan.featured).length;
+            document.getElementById('total-bedrooms').textContent = plans.reduce((sum, plan) => sum + plan.bedrooms, 0);
+            document.getElementById('total-bathrooms').textContent = plans.reduce((sum, plan) => sum + plan.bathrooms, 0);
+        }
+
+        // Render charts for statistics
+        function renderCharts(plans) {
+            // Stories distribution chart
+            const storiesCtx = document.getElementById('storiesChart').getContext('2d');
+            const storiesCount = {
+                '1': plans.filter(plan => plan.stories === 1).length,
+                '2': plans.filter(plan => plan.stories === 2).length
+            };
+            
+            if (storiesChart) {
+                storiesChart.destroy();
+            }
+            
+            storiesChart = new Chart(storiesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Single Story', 'Double Story'],
+                    datasets: [{
+                        data: [storiesCount['1'], storiesCount['2']],
+                        backgroundColor: ['#3498db', '#2ecc71'],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Plans by Number of Stories'
+                        }
+                    }
+                }
+            });
+            
+            // Price distribution chart
+            const priceCtx = document.getElementById('priceChart').getContext('2d');
+            const priceRanges = {
+                '0-1000': plans.filter(plan => plan.price <= 1000).length,
+                '1001-2500': plans.filter(plan => plan.price > 1000 && plan.price <= 2500).length,
+                '2501-5000': plans.filter(plan => plan.price > 2500 && plan.price <= 5000).length,
+                '5001+': plans.filter(plan => plan.price > 5000).length
+            };
+            
+            if (priceChart) {
+                priceChart.destroy();
+            }
+            
+            priceChart = new Chart(priceCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['≤ R1K', 'R1K - R2.5K', 'R2.5K - R5K', '> R5K'],
+                    datasets: [{
+                        label: 'Number of Plans',
+                        data: [
+                            priceRanges['0-1000'],
+                            priceRanges['1001-2500'],
+                            priceRanges['2501-5000'],
+                            priceRanges['5001+']
+                        ],
+                        backgroundColor: '#3498db',
+                        borderColor: '#2980b9',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Plans by Price Range'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render stats table
+        function renderStatsTable(plans) {
+            const tableBody = document.getElementById('stats-table-body');
+            tableBody.innerHTML = '';
+            
+            plans.forEach(plan => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${plan.title}</td>
+                    <td>${plan.stories}</td>
+                    <td>${plan.bedrooms}</td>
+                    <td>${plan.bathrooms}</td>
+                    <td>${plan.totalArea}</td>
+                    <td>R${plan.price.toLocaleString()}</td>
+                    <td>${plan.featured ? '<i class="bi bi-check-circle text-success"></i>' : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Toggle first floor based on stories selection
+        function toggleFirstFloor() {
+            const firstFloor = document.querySelector('.floor-plan[data-floor="first"]');
+            if (storiesSelect.value === '2') {
+                firstFloor.classList.remove('d-none');
+                firstFloor.querySelectorAll('input').forEach(input => input.setAttribute('required', 'true'));
+            } else {
+                firstFloor.classList.add('d-none');
+                firstFloor.querySelectorAll('input').forEach(input => input.removeAttribute('required'));
+            }
+        }
+
+        // Add room to floor plan
+        function addRoom(e) {
+            const input = e.target.previousElementSibling;
+            const roomName = input.value.trim();
+            
+            if (roomName) {
+                const roomsContainer = e.target.parentElement.nextElementSibling;
+                const roomTag = document.createElement('div');
+                roomTag.className = 'room-tag';
+                roomTag.innerHTML = `
+                    ${roomName}
+                    <button type="button" class="btn-close" aria-label="Remove"></button>
+                `;
+                roomsContainer.appendChild(roomTag);
+                input.value = '';
+                
+                // Add event listener to remove button
+                roomTag.querySelector('.btn-close').addEventListener('click', function() {
+                    roomTag.remove();
+                });
+            }
+        }
+
+        // Handle image upload
+        function handleImageUpload(e) {
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+            
+            // Limit to 10 images
+            if (files.length > 10) {
+                showNotification('Maximum 10 images allowed. Only the first 10 will be uploaded.', 'warning');
+            }
+            
+            const formData = new FormData();
+            const filesToUpload = Array.from(files).slice(0, 10);
+            
+            filesToUpload.forEach(file => {
+                formData.append('images', file);
+            });
+            
+            // Upload to server
+            fetch(`${API_BASE}/upload`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Upload failed');
+                }
+                return response.json();
+            })
+            .then(result => {
+                // Add uploaded images to preview
+                result.imageUrls.forEach(url => {
+                    addImagePreview(url);
+                });
+                
+                showNotification('Images uploaded successfully!');
+            })
+            .catch(error => {
+                console.error('Error uploading images:', error);
+                showNotification('Error uploading images. Please try again.', 'danger');
+            });
+        }
+
+        // Add image preview
+        function addImagePreview(url) {
+            const previewItem = document.createElement('div');
+            previewItem.className = 'image-preview-item';
+            previewItem.innerHTML = `
+                <img src="${url}" alt="Preview">
+                <button type="button" class="remove-image">&times;</button>
+            `;
+            
+            // Add event listener to remove button
+            previewItem.querySelector('.remove-image').addEventListener('click', function() {
+                previewItem.remove();
+                updateImageUrls();
+            });
+            
+            imagePreviewContainer.appendChild(previewItem);
+            updateImageUrls();
+        }
+
+        // Update hidden field with image URLs
+        function updateImageUrls() {
+            const urls = Array.from(imagePreviewContainer.querySelectorAll('img')).map(img => img.src);
+            imageUrls.value = JSON.stringify(urls);
+        }
+
+        // Save house plan (new or edited)
+        function saveHousePlan(e) {
+            e.preventDefault();
+            
+            // Collect room data from each floor
+            const floors = [];
+            document.querySelectorAll('.floor-plan:not(.d-none)').forEach(floorEl => {
+                const floorName = floorEl.querySelector('h6').textContent;
+                const area = floorEl.querySelector('.floor-area').value;
+                const rooms = Array.from(floorEl.querySelectorAll('.room-tag')).map(tag => 
+                    tag.textContent.trim()
+                );
+                
+                floors.push({
+                    name: floorName,
+                    area: parseInt(area),
+                    rooms: rooms
+                });
+            });
+            
+            // Calculate total area from floors
+            const totalArea = floors.reduce((sum, floor) => sum + floor.area, 0);
+            
+            // Get image URLs
+            const images = JSON.parse(imageUrls.value || '[]');
+            
+            // Create house plan object
+            const housePlan = {
+                id: houseId.value ? parseInt(houseId.value) : newId,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                stories: parseInt(document.getElementById('stories').value),
+                floors: floors,
+                totalArea: totalArea,
+                dimensions: document.getElementById('dimensions').value,
+                price: parseInt(document.getElementById('price').value),
+                images: images,
+                featured: document.getElementById('featured').checked,
+                bedrooms: parseInt(document.getElementById('bedrooms').value),
+                bathrooms: parseInt(document.getElementById('bathrooms').value)
+            };
+            
+            // Determine if we're creating or updating
+            const isEdit = !!houseId.value;
+            const url = isEdit ? `${API_BASE}/plans/${houseId.value}` : `${API_BASE}/plans`;
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            // Send request to server
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(housePlan)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                showNotification(isEdit ? 'House plan updated successfully!' : 'House plan created successfully!');
+                resetForm();
+                fetchHousePlans();
+                
+                // Switch to listings tab
+                document.querySelector('[href="#listings"]').click();
+            })
+            .catch(error => {
+                console.error('Error saving house plan:', error);
+                showNotification('Error saving house plan: ' + error.message, 'danger');
+            });
+        }
+
+        // Edit house plan
+        function editHousePlan(id) {
+            fetch(`${API_BASE}/plans/${id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(house => {
+                    // Switch to form tab
+                    document.querySelector('[href="#add-new"]').click();
+                    
+                    // Set form title
+                    formTitle.textContent = 'Edit House Plan';
+                    
+                    // Fill form with house data
+                    houseId.value = house.id;
+                    document.getElementById('title').value = house.title;
+                    document.getElementById('description').value = house.description;
+                    document.getElementById('stories').value = house.stories;
+                    document.getElementById('dimensions').value = house.dimensions;
+                    document.getElementById('price').value = house.price;
+                    document.getElementById('totalArea').value = house.totalArea;
+                    document.getElementById('bedrooms').value = house.bedrooms;
+                    document.getElementById('bathrooms').value = house.bathrooms;
+                    document.getElementById('featured').checked = house.featured;
+                    
+                    // Clear image previews and add existing images
+                    imagePreviewContainer.innerHTML = '';
+                    if (house.images && house.images.length > 0) {
+                        house.images.forEach(url => {
+                            addImagePreview(url);
+                        });
+                    }
+                    
+                    // Toggle first floor based on stories
+                    toggleFirstFloor();
+                    
+                    // Clear existing room inputs
+                    document.querySelectorAll('.rooms-container').forEach(container => {
+                        container.innerHTML = '';
+                    });
+                    
+                    // Clear area inputs
+                    document.querySelectorAll('.floor-area').forEach(input => {
+                        input.value = '';
+                    });
+                    
+                    // Populate floor data
+                    house.floors.forEach((floor, index) => {
+                        const floorEl = document.querySelectorAll('.floor-plan:not(.d-none)')[index];
+                        if (floorEl) {
+                            floorEl.querySelector('.floor-area').value = floor.area;
+                            
+                            const roomsContainer = floorEl.querySelector('.rooms-container');
+                            floor.rooms.forEach(room => {
+                                const roomTag = document.createElement('div');
+                                roomTag.className = 'room-tag';
+                                roomTag.innerHTML = `
+                                    ${room}
+                                    <button type="button" class="btn-close" aria-label="Remove"></button>
+                                `;
+                                roomsContainer.appendChild(roomTag);
+                                
+                                // Add event listener to remove button
+                                roomTag.querySelector('.btn-close').addEventListener('click', function() {
+                                    roomTag.remove();
+                                });
+                            });
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching house plan:', error);
+                    showNotification('Error fetching house plan: ' + error.message, 'danger');
+                });
+        }
+
+        // Delete house plan
+        function deleteHousePlan(id) {
+            if (confirm('Are you sure you want to delete this house plan?')) {
+                fetch(`${API_BASE}/plans/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    showNotification('House plan deleted successfully!');
+                    fetchHousePlans();
+                })
+                .catch(error => {
+                    console.error('Error deleting house plan:', error);
+                    showNotification('Error deleting house plan: ' + error.message, 'danger');
+                });
+            }
+        }
+
+        // Reset form
+        function resetForm() {
+            houseForm.reset();
+            houseId.value = '';
+            formTitle.textContent = 'Add New House Plan';
+            imagePreviewContainer.innerHTML = '';
+            imageUrls.value = '';
+            
+            // Clear room tags but keep the first one for ground floor
+            document.querySelectorAll('.rooms-container').forEach(container => {
+                container.innerHTML = '';
+            });
+            
+            // Reset floor areas
+            document.querySelectorAll('.floor-area').forEach(input => {
+                input.value = '';
+            });
+            
+            // Show only ground floor by default
+            document.querySelector('.floor-plan[data-floor="first"]').classList.add('d-none');
+            document.getElementById('stories').value = '1';
+        }
+    </script>
+</body>
+</html>

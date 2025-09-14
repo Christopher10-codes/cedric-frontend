@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse House Plans</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Additional styles for plans page */
+        .plans-header {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80') no-repeat center center/cover;
+            height: 40vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            margin-top: 70px;
+        }
+
+        .plans-header h1 {
+            color: white;
+            font-size: 2.5rem;
+        }
+
+        .plans-filter {
+            background-color: white;
+            padding: 30px 0;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 150px;
+        }
+
+        .filter-group label {
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+
+        .filter-group button {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-group button:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+
+        .footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 2.5rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer h5 {
+            color: white;
+            margin-bottom: 1.25rem;
+        }
+
+        .footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-color);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>Cedric House Plans</h1>
+                <p>Building Dreams, One Plan at a Time</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="plans.html" class="active">All Plans</a></li>
+                    <li><a href="admin.html">Admin</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Plans Page Content -->
+    <div class="plans-page">
+        <section class="plans-header">
+            <div class="container">
+                <h1>Browse Our House Plans</h1>
+                <p>Find the perfect design for your dream home</p>
+            </div>
+        </section>
+
+        <section class="plans-filter">
+            <div class="container">
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <label for="bedrooms">Bedrooms:</label>
+                        <select id="bedrooms">
+                            <option value="all">All</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5+</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="bathrooms">Bathrooms:</label>
+                        <select id="bathrooms">
+                            <option value="all">All</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4+</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="stories">Stories:</label>
+                        <select id="stories">
+                            <option value="all">All</option>
+                            <option value="1">Single Story</option>
+                            <option value="2">Double Story</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="price">Price Range:</label>
+                        <select id="price">
+                            <option value="all">All</option>
+                            <option value="0-1000">Under R1,000</option>
+                            <option value="1000-2000">R1,000 - R2,000</option>
+                            <option value="2000-3000">R2,000 - R3,000</option>
+                            <option value="3000-5000">R3,000 - R5,000</option>
+                            <option value="5000">Over R5,000</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="size">Size:</label>
+                        <select id="size">
+                            <option value="all">All</option>
+                            <option value="0-100">Under 100 sqm</option>
+                            <option value="100-200">100 - 200 sqm</option>
+                            <option value="200-300">200 - 300 sqm</option>
+                            <option value="300-400">300 - 400 sqm</option>
+                            <option value="400">Over 400 sqm</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sort">Sort By:</label>
+                        <select id="sort">
+                            <option value="featured">Featured</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="bedrooms">Most Bedrooms</option>
+                            <option value="size">Largest Size</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label style="visibility: hidden;">Reset</label>
+                        <button id="resetFilters" class="btn btn-outline">Reset Filters</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="all-plans">
+            <div class="container">
+                <div class="plans-grid" id="allPlans">
+                    <div class="spinner" id="plansSpinner"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Cedric House Plans</h5>
+                    <p>Our plans are crafted with precision and care to meet your family's needs.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-twitter"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-pinterest"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="plans.html">Plans</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3">
+                    <h5>Contact Us</h5>
+                    <address>
+                        <i class="bi bi-telephone"></i> 072 665 9790<br>
+                        <i class="bi bi-envelope"></i> info@cedrichouseplans.co.za
+                    </address>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                <p>&copy; 2025 Cedric House's Plans. All Rights Reserved | Designed with <i class="fas fa-heart" style="color: #ff6b6b;"></i> by <a href="https://pulsedigitallab.co.za" style="color: var(--light-blue); text-decoration: none; font-weight: 600; transition: color 0.3s ease;">Pulse Digital Lab</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // API base URL
+        const API_BASE = 'http://localhost:3001/api';
+        
+        // DOM elements
+        const allPlansContainer = document.getElementById('allPlans');
+        const plansSpinner = document.getElementById('plansSpinner');
+        const bedroomsFilter = document.getElementById('bedrooms');
+        const bathroomsFilter = document.getElementById('bathrooms');
+        const storiesFilter = document.getElementById('stories');
+        const priceFilter = document.getElementById('price');
+        const sizeFilter = document.getElementById('size');
+        const sortFilter = document.getElementById('sort');
+        const resetFiltersBtn = document.getElementById('resetFilters');
+        
+        // House plans data
+        let housePlans = [];
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchHousePlans();
+            setupEventListeners();
+        });
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            bedroomsFilter.addEventListener('change', filterPlans);
+            bathroomsFilter.addEventListener('change', filterPlans);
+            storiesFilter.addEventListener('change', filterPlans);
+            priceFilter.addEventListener('change', filterPlans);
+            sizeFilter.addEventListener('change', filterPlans);
+            sortFilter.addEventListener('change', filterPlans);
+            resetFiltersBtn.addEventListener('click', resetFilters);
+            
+            // Add event listeners for plan selection and details
+            document.addEventListener('click', function(e) {
+                // Handle Select Plan button clicks
+                if (e.target.classList.contains('select-plan') || 
+                    e.target.parentElement.classList.contains('select-plan')) {
+                    
+                    const button = e.target.classList.contains('select-plan') ? 
+                                  e.target : e.target.parentElement;
+                    const planId = button.dataset.id;
+                    const plan = housePlans.find(p => p.id == planId);
+                    
+                    if (plan) {
+                        selectPlan(plan);
+                    }
+                }
+                
+                // Handle View Details button clicks
+                if (e.target.classList.contains('view-details') || 
+                    e.target.parentElement.classList.contains('view-details')) {
+                    
+                    const button = e.target.classList.contains('view-details') ? 
+                                  e.target : e.target.parentElement;
+                    const planId = button.dataset.id;
+                    const plan = housePlans.find(p => p.id == planId);
+                    
+                    if (plan) {
+                        viewPlanDetails(plan);
+                    }
+                }
+            });
+        }
+        
+        // Fetch house plans from server
+        function fetchHousePlans() {
+            plansSpinner.style.display = 'block';
+            
+            fetch(`${API_BASE}/plans`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(plans => {
+                    housePlans = plans;
+                    renderPlans(plans);
+                    plansSpinner.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error fetching house plans:', error);
+                    allPlansContainer.innerHTML = `
+                        <div class="no-results">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <h3>Unable to Load Plans</h3>
+                            <p>There was an error loading the house plans. Please try again later.</p>
+                            <button class="btn btn-primary mt-3" onclick="fetchHousePlans()">Retry</button>
+                        </div>
+                    `;
+                    plansSpinner.style.display = 'none';
+                });
+        }
+        
+        // Render house plans
+        function renderPlans(plans) {
+            if (plans.length === 0) {
+                allPlansContainer.innerHTML = `
+                    <div class="no-results">
+                        <i class="bi bi-search"></i>
+                        <h3>No Plans Found</h3>
+                        <p>No house plans match your current filters. Try adjusting your criteria.</p>
+                        <button class="btn btn-primary mt-3" onclick="resetFilters()">Reset Filters</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            allPlansContainer.innerHTML = '';
+            
+            plans.forEach(plan => {
+                const planCard = document.createElement('div');
+                planCard.className = 'plan-card';
+                
+                planCard.innerHTML = `
+                    <div class="plan-image">
+                        <div class="carousel">
+                            <div class="carousel-images">
+                                ${plan.images && plan.images.length > 0 ? 
+                                    plan.images.map((image, index) => `
+                                        <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                            <img src="${image}" alt="${plan.title}" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Not+Found'">
+                                        </div>
+                                    `).join('') : 
+                                    `<div class="carousel-item active">
+                                        <img src="https://via.placeholder.com/400x300?text=No+Image" alt="${plan.title}">
+                                    </div>`
+                                }
+                            </div>
+                            ${plan.images && plan.images.length > 1 ? `
+                                <button class="carousel-prev">&#10094;</button>
+                                <button class="carousel-next">&#10095;</button>
+                                <div class="carousel-dots">
+                                    ${plan.images.map((_, index) => `
+                                        <span class="dot ${index === 0 ? 'active' : ''}" data-index="${index}"></span>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                        ${plan.featured ? '<div class="featured-badge">FEATURED</div>' : ''}
+                    </div>
+                    <div class="plan-details">
+                        <h3>${plan.title}</h3>
+                        <p class="plan-description">${plan.description}</p>
+                        
+                        
+                        
+                        <div class="plan-price">R${plan.price.toLocaleString()}</div>
+                        
+                        ${plan.floors ? plan.floors.map(floor => `
+                            <div class="floor-info">
+                                <h4><i class="fas fa-layer-group"></i> ${floor.name}</h4>
+                                <div class="floor-details">
+                                    <div class="floor-area">${floor.area} sqm</div>
+                                    <div class="floor-rooms">
+                                        ${floor.rooms.map(room => `<span class="room-tag">${room}</span>`).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('') : ''}
+                        
+                        <div class="plan-actions">
+                            <button class="btn btn-details view-details" data-id="${plan.id}">View Details</button>
+                            <button class="btn btn-whatsapp select-plan" data-id="${plan.id}">Select This Plan</button>
+                        </div>
+                    </div>
+                `;
+                
+                allPlansContainer.appendChild(planCard);
+            });
+            
+            // Initialize carousels
+            initializeCarousels();
+        }
+        
+        // Initialize carousels
+        function initializeCarousels() {
+            document.querySelectorAll('.carousel').forEach(carousel => {
+                const items = carousel.querySelectorAll('.carousel-item');
+                const dots = carousel.querySelectorAll('.dot');
+                const prevBtn = carousel.querySelector('.carousel-prev');
+                const nextBtn = carousel.querySelector('.carousel-next');
+                
+                if (items.length <= 1) {
+                    if (prevBtn) prevBtn.style.display = 'none';
+                    if (nextBtn) nextBtn.style.display = 'none';
+                    if (dots.length > 0) carousel.querySelector('.carousel-dots').style.display = 'none';
+                    return;
+                }
+                
+                let currentIndex = 0;
+                
+                function showSlide(index) {
+                    // Hide all items
+                    items.forEach(item => item.classList.remove('active'));
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    
+                    // Show current item
+                    items[index].classList.add('active');
+                    dots[index].classList.add('active');
+                    
+                    currentIndex = index;
+                }
+                
+                // Next slide
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        let newIndex = currentIndex + 1;
+                        if (newIndex >= items.length) newIndex = 0;
+                        showSlide(newIndex);
+                    });
+                }
+                
+                // Previous slide
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', () => {
+                        let newIndex = currentIndex - 1;
+                        if (newIndex < 0) newIndex = items.length - 1;
+                        showSlide(newIndex);
+                    });
+                }
+                
+                // Dot navigation
+                dots.forEach(dot => {
+                    dot.addEventListener('click', () => {
+                        const index = parseInt(dot.getAttribute('data-index'));
+                        showSlide(index);
+                    });
+                });
+                
+                // Auto slide if more than 1 image
+                if (items.length > 1) {
+                    setInterval(() => {
+                        let newIndex = currentIndex + 1;
+                        if (newIndex >= items.length) newIndex = 0;
+                        showSlide(newIndex);
+                    }, 5000);
+                }
+            });
+        }
+        
+        // Filter house plans based on selected criteria
+        function filterPlans() {
+            const bedroomsValue = bedroomsFilter.value;
+            const bathroomsValue = bathroomsFilter.value;
+            const storiesValue = storiesFilter.value;
+            const priceValue = priceFilter.value;
+            const sizeValue = sizeFilter.value;
+            const sortValue = sortFilter.value;
+            
+            let filteredPlans = [...housePlans];
+            
+            // Filter by bedrooms
+            if (bedroomsValue !== 'all') {
+                const minBedrooms = parseInt(bedroomsValue);
+                filteredPlans = filteredPlans.filter(plan => {
+                    if (bedroomsValue === '5') {
+                        return plan.bedrooms >= 5;
+                    }
+                    return plan.bedrooms === minBedrooms;
+                });
+            }
+            
+            // Filter by bathrooms
+            if (bathroomsValue !== 'all') {
+                const minBathrooms = parseInt(bathroomsValue);
+                filteredPlans = filteredPlans.filter(plan => {
+                    if (bathroomsValue === '4') {
+                        return plan.bathrooms >= 4;
+                    }
+                    return plan.bathrooms === minBathrooms;
+                });
+            }
+            
+            // Filter by stories
+            if (storiesValue !== 'all') {
+                filteredPlans = filteredPlans.filter(plan => plan.stories === parseInt(storiesValue));
+            }
+            
+            // Filter by price
+            if (priceValue !== 'all') {
+                const [min, max] = priceValue.split('-').map(val => val === '' ? Infinity : parseInt(val));
+                filteredPlans = filteredPlans.filter(plan => {
+                    if (max) {
+                        return plan.price >= min && plan.price <= max;
+                    } else {
+                        return plan.price >= min;
+                    }
+                });
+            }
+            
+            // Filter by size
+            if (sizeValue !== 'all') {
+                const [min, max] = sizeValue.split('-').map(val => val === '' ? Infinity : parseInt(val));
+                filteredPlans = filteredPlans.filter(plan => {
+                    if (max) {
+                        return plan.totalArea >= min && plan.totalArea <= max;
+                    } else {
+                        return plan.totalArea >= min;
+                    }
+                });
+            }
+            
+            // Sort plans
+            switch(sortValue) {
+                case 'price-low':
+                    filteredPlans.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-high':
+                    filteredPlans.sort((a, b) => b.price - a.price);
+                    break;
+                case 'bedrooms':
+                    filteredPlans.sort((a, b) => b.bedrooms - a.bedrooms);
+                    break;
+                case 'size':
+                    filteredPlans.sort((a, b) => b.totalArea - a.totalArea);
+                    break;
+                case 'featured':
+                default:
+                    filteredPlans.sort((a, b) => b.featured - a.featured);
+                    break;
+            }
+            
+            renderPlans(filteredPlans);
+        }
+        
+        // Reset all filters
+        function resetFilters() {
+            bedroomsFilter.value = 'all';
+            bathroomsFilter.value = 'all';
+            storiesFilter.value = 'all';
+            priceFilter.value = 'all';
+            sizeFilter.value = 'all';
+            sortFilter.value = 'featured';
+            
+            renderPlans(housePlans);
+        }
+        
+        // Function to handle plan selection via WhatsApp
+        function selectPlan(plan) {
+            // Create the WhatsApp message
+            const message = `Hello Cedric! I'm interested in your ${plan.title} house plan.%0A%0A` +
+                           `*Plan Details:*%0A` +
+                           `- ${plan.description}%0A` +
+                           `- Bedrooms: ${plan.bedrooms}%0A` +
+                           `- Bathrooms: ${plan.bathrooms}%0A` +
+                           `- Total Area: ${plan.totalArea} m²%0A` +
+                           `- Stories: ${plan.stories}%0A` +
+                           `- Price: R${plan.price.toLocaleString()}%0A%0A` +
+                           `Please provide me with more information about this plan.`;
+            
+            // Create the WhatsApp URL
+            const whatsappURL = `https://wa.me/27726659790?text=${message}`;
+            
+            // Open WhatsApp in a new tab
+            window.open(whatsappURL, '_blank');
+            
+            // Show notification
+            alert('Opening WhatsApp to contact Cedric about this plan...');
+        }
+        
+        // Function to view plan details
+        function viewPlanDetails(plan) {
+            // Create a detailed message
+            let detailsMessage = `Plan Details:\n\n${plan.title}\n${plan.description}\n\n`;
+            detailsMessage += `Bedrooms: ${plan.bedrooms}\n`;
+            detailsMessage += `Bathrooms: ${plan.bathrooms}\n`;
+            detailsMessage += `Total Area: ${plan.totalArea} m²\n`;
+            detailsMessage += `Stories: ${plan.stories}\n`;
+            detailsMessage += `Price: R${plan.price.toLocaleString()}\n\n`;
+            
+            // Add floor details if available
+            if (plan.floors && plan.floors.length > 0) {
+                detailsMessage += `Floor Plans:\n`;
+                plan.floors.forEach(floor => {
+                    detailsMessage += `\n${floor.name} (${floor.area} m²):\n`;
+                    detailsMessage += `- ${floor.rooms.join('\n- ')}\n`;
+                });
+            }
+            
+            // Show details in an alert
+            alert(detailsMessage);
+        }
+    </script>
+</body>
+</html>

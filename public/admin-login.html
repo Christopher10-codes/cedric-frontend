@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Cedric House Plans</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h2 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .login-header p {
+            color: #6c757d;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+        }
+        
+        .btn-login {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            width: 100%;
+            padding: 10px;
+            font-weight: 600;
+        }
+        
+        .btn-login:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        
+        .alert {
+            margin-top: 20px;
+        }
+        
+        .password-toggle {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 38px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h2><i class="fas fa-lock"></i> Admin Login</h2>
+            <p>Enter your credentials to access the admin panel</p>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+            </div>
+            
+            <div class="form-group" style="position: relative;">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                <span class="password-toggle" id="passwordToggle">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-login">Login</button>
+            
+            <div class="alert alert-danger mt-3 d-none" id="errorAlert" role="alert"></div>
+        </form>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001/api';
+        
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorAlert = document.getElementById('errorAlert');
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store authentication status in sessionStorage
+                    sessionStorage.setItem('adminAuthenticated', 'true');
+                    // Redirect to admin panel
+                    window.location.href = '/admin-panel';
+                } else {
+                    errorAlert.textContent = data.message;
+                    errorAlert.classList.remove('d-none');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorAlert.textContent = 'An error occurred during login. Please try again.';
+                errorAlert.classList.remove('d-none');
+            }
+        });
+        
+        // Toggle password visibility
+        document.getElementById('passwordToggle').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        
+        // Check if already authenticated
+        if (sessionStorage.getItem('adminAuthenticated') === 'true') {
+            window.location.href = '/admin-panel';
+        }
+    </script>
+</body>
+</html>
